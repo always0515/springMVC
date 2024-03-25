@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.board.springmvc01.repository.BoardRepository">
+
+    <select id="findAll" resultType="Board">
+        select * from myboard order by idx desc
+    </select>
+
+    <insert id="save" parameterType="Board">
+        insert into myboard(title,content,writer)
+        values(#{title},#{content},#{writer})
+    </insert>
+
+    <select id="findByIdx" resultType="Board">
+        select * from myboard where idx=#{idx}
+    </select>
+
+    <delete id="deleteByIdx" parameterType="int">
+        delete from myboard where idx=#{num}
+    </delete>
+
+    <update id="addViewCount" parameterType="int">
+        update myboard set view_count = view_count+1 where idx = #{idx}
+    </update>
+
+<!--    <update id="edit" parameterType="Board">-->
+<!--        update myboard set title = #{title}, content = #{content} where idx = #{idx}-->
+<!--    </update>-->
+
+</mapper>
