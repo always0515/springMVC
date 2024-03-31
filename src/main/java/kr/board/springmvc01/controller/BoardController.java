@@ -4,70 +4,33 @@ import kr.board.springmvc01.entity.Board;
 import kr.board.springmvc01.service.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
 @Controller
-@RequestMapping("board")
+@RequestMapping("/")
 public class BoardController {
-
     @Autowired
     BoardService service;
 
-    @GetMapping()
-    public String list(Model model) {
+    @GetMapping
+    public String main() {
+        return "main";
+    }
+
+    @RequestMapping("api/list")
+    @ResponseBody
+    public List<Board> list() {
         List<Board> list = service.getList();
-        model.addAttribute("list", list);
-        return "board/list";
+        return list;
     }
 
-    @GetMapping("detail")
-    public String detail(@RequestParam("idx") int idx, Model model) {
-        Board board = service.getByIdx(idx);
-        service.addViewCount(idx);
-        model.addAttribute("board", board);
-
-        return "board/detail";
-    }
-
-    @GetMapping("write")
-    public String writeForm() {
-
-        return "board/write";
-    }
-
-    @PostMapping("write")
-    public String saveWrite(Board board) {
+    @RequestMapping("boardInsert")
+    @ResponseBody // 단순 게시글을 DB에 저장하기 위한 용도의 메서드라 리턴할 Json형식의 데이터가 없기떄문에 생략해도됨
+    public void boardInsert(Board board) {
         service.saveWrite(board);
-
-        return "redirect:/board";
-    }
-
-    @GetMapping("delete/{num}") //뒤에 idx(변수명)와 클라이언트에서 보내는 값이 안맞아도됨
-    public String delete(@PathVariable int num) { //따로 담을 변수명 하지않을경우 생략도됨 @PathVariable("num") int num
-            service.delete(num);
-        return "redirect:/board";
-    }
-
-    @GetMapping("edit/{idx}")
-    public String edit(@PathVariable("idx") int idx,Model model) {
-        Board board = service.getByIdx(idx);
-        model.addAttribute("board",board);
-        return "/board/edit";
-    }
-
-    @PostMapping("update")
-    public String saveEdit(@RequestParam("title") String title ,
-                           @RequestParam("content") String content ,
-                           Model model) {
-        Board board = new Board().builder()
-                .title(title)
-                .content(content).build();
-        service.update(board);
-        System.out.println(board.getTitle());
-        System.out.println(board.getContent());
-        return "redirect:/board";
     }
 }
